@@ -1,9 +1,11 @@
 package br.com.alura.fipeTable.principal;
 
+import br.com.alura.fipeTable.model.Modelos;
 import br.com.alura.fipeTable.model.Veiculo;
 import br.com.alura.fipeTable.service.ConsumoApi;
 import br.com.alura.fipeTable.service.ConverteDados;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -24,6 +26,8 @@ public class Principal {
                 3-Motos""");
         System.out.println("***********************************");
 
+        //Showing car brand
+
         String veicAns = scan.next();
         String end;
 
@@ -35,16 +39,28 @@ public class Principal {
             end = "motos/marcas/";
         }
 
-        String json = consumo.obterDados(ENDERECO_INIT + end);
+        String endereco = ENDERECO_INIT + end;
+
+        String json = consumo.obterDados(endereco);
         System.out.println(json);
         List<Veiculo> marcas = conversor.obterLista(json, Veiculo.class);
         marcas.forEach(System.out::println);
 
+        //Showing brand models
+
         System.out.println("\nDigite um código dos mostrados acima");
         String modelAns = scan.next();
-        json = consumo.obterDados(ENDERECO_INIT + end + modelAns + "/models/");
-        List<Veiculo> modelos = conversor.obterLista(json, Veiculo.class);
-        modelos.forEach(System.out::println);
+        endereco = endereco + modelAns + "/modelos";
+        json = consumo.obterDados(endereco);
+        Modelos modelos = conversor.obterDados(json, Modelos.class);
+
+        System.out.println("\nModelos desta marca: ");
+        modelos.modelos().stream()
+                .sorted(Comparator.comparing(Veiculo::nome))
+                .forEach(System.out::println);
+
+
+
 
     }
 
